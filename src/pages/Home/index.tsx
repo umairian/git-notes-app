@@ -1,13 +1,14 @@
 import { Box } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
-import { GridViewRounded, ViewListRounded } from "@mui/icons-material";
 import { PRIMARY_COLOR } from "../../constants/theme";
 import ListView from "../../components/Home/ListView";
 import { useState } from "react";
 import GridView from "../../components/Home/GridView";
+import { IoGrid, IoGridOutline, IoList } from "react-icons/io5";
+import { VIEW_OPTIONS, iconStyles, spanStyles } from "./constants";
 
 export default function HomePage() {
-  const [view, setView] = useState("list");
+  const [view, setView] = useState(VIEW_OPTIONS.list);
   return (
     <AppLayout>
       <Box
@@ -19,30 +20,29 @@ export default function HomePage() {
         }}
       >
         <span>
-          <span onClick={() => setView("grid")}>
-            <GridViewRounded
-              sx={{
-                color: view === "grid" ? PRIMARY_COLOR : "gray",
-                fontSize: 30,
-                paddingX: "10px",
-                cursor: "pointer",
-              }}
-            />
+          <span
+            onClick={() => setView(VIEW_OPTIONS.grid)}
+            style={spanStyles(false)}
+          >
+            {view === VIEW_OPTIONS.grid ? (
+              <IoGrid style={iconStyles(PRIMARY_COLOR)} />
+            ) : (
+              <IoGridOutline style={iconStyles("gray")} />
+            )}
           </span>
-          <span onClick={() => setView("list")}>
-            <ViewListRounded
-              sx={{
-                color: view === "list" ? PRIMARY_COLOR : "gray",
-                fontSize: 30,
-                paddingX: "10px",
-                cursor: "pointer",
-                borderLeft: "1px solid gray",
-              }}
+          <span
+            onClick={() => setView(VIEW_OPTIONS.list)}
+            style={spanStyles(true)}
+          >
+            <IoList
+              style={iconStyles(
+                view === VIEW_OPTIONS.list ? PRIMARY_COLOR : "gray"
+              )}
             />
           </span>
         </span>
       </Box>
-      {view === "list" ? <ListView /> : <GridView />}
+      {view === VIEW_OPTIONS.list ? <ListView /> : <GridView />}
     </AppLayout>
   );
 }
