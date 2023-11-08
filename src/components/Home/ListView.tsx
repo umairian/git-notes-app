@@ -8,11 +8,17 @@ export default function ListView() {
 
   // State Variables
   const [gists, setGists] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
 
-  const { isLoading, data, error } = useQuery({
-    queryKey: ["publicGists"],
+  const { isLoading, data, error, refetch } = useQuery({
+    queryKey: ["publicGists", { page, limit }],
     queryFn: getPublicGistsApi,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [limit, page])
 
   useEffect(() => {
     if(data) {
@@ -22,7 +28,7 @@ export default function ListView() {
 
   return (
     <Box>
-        <DataTable isLoading={isLoading} data={gists} />
+        <DataTable isLoading={isLoading} data={gists} limit={limit} page={page} setPage={setPage} setLimit={setLimit} />
     </Box>
   );
 }

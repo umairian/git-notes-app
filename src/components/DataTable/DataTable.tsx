@@ -30,9 +30,17 @@ const columns = [
 export default function DataTable({
   isLoading,
   data,
+  limit,
+  page,
+  setPage,
+  setLimit,
 }: {
   isLoading: boolean;
   data: PublicGistsResObjI[];
+  limit: number;
+  page: number;
+  setPage: (page: number) => void;
+  setLimit: (limit: number) => void;
 }) {
   return (
     <>
@@ -127,13 +135,18 @@ export default function DataTable({
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={data.length}
-        rowsPerPage={10}
-        page={1}
-        onPageChange={() => {}}
-        onRowsPerPageChange={() => {}}
+        count={3000}
+        rowsPerPage={limit}
+        page={page}
+        onPageChange={(e: unknown, page: number) => {
+          setPage(Number(page));
+        }}
+        onRowsPerPageChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setLimit(Number(e.target.value));
+          setPage(1);
+        }}
       />
     </>
   );

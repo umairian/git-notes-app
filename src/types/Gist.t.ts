@@ -11,3 +11,5 @@ export interface PublicGistsResObjI {
     };
   };
 }
+
+export type PublicGistsQueryKey = [string, { page: number; limit: number }];
