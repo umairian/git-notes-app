@@ -9,6 +9,9 @@ import { VIEW_OPTIONS, iconStyles, spanStyles } from "./constants";
 
 export default function HomePage() {
   const [view, setView] = useState(VIEW_OPTIONS.list);
+
+  
+
   return (
     <AppLayout>
       <Box

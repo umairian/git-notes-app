@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Checkbox,
+  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -13,125 +14,34 @@ import {
 } from "@mui/material";
 import { PRIMARY_COLOR } from "../../constants/theme";
 import { AiOutlineFork, AiOutlineStar } from "react-icons/ai";
+import { PublicGistsResObjI } from "../../types/Gist.t";
+import moment from "moment";
+import { LONG_DATE_FORMAT, TIME_FORMAT } from "../../constants/date";
 
 const columns = [
-  { field: "name", headerName: "Name" },
-  { field: "date", headerName: "Date" },
-  { field: "time", headerName: "Time" },
-  {
-    field: "keyword",
-    headerName: "Keyword",
-  },
-  {
-    field: "notebookName",
-    headerName: "Notebook Name",
-  },
-  {
-    field: "actions",
-    headerName: "",
-  },
+  "Name",
+  "Date",
+  "Time",
+  "Description",
+  "Notebook Name",
+  "Actions",
 ];
 
-const rows = [
-  {
-    id: 1,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Jon",
-    time: 35,
-    actions: (
-      <span>
-        <AiOutlineStar size={20} style={{ marginRight: 5}} />
-        <AiOutlineFork size={20} />
-      </span>
-    ),
-  },
-  {
-    id: 2,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Cersei",
-    time: 42,
-  },
-  {
-    id: 3,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Jaime",
-    time: 45,
-  },
-  {
-    id: 4,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Arya",
-    time: 16,
-  },
-  {
-    id: 5,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Daenerys",
-    time: null,
-  },
-  {
-    id: 6,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: null,
-    time: 150,
-  },
-  {
-    id: 7,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Ferrara",
-    time: 44,
-  },
-  {
-    id: 8,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Rossini",
-    time: 36,
-  },
-  {
-    id: 9,
-    name: (
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar sx={{ height: 30, width: 30 }} /> Umair Syed
-      </Box>
-    ),
-    date: "Harvey",
-    time: 65,
-  },
-];
-
-export default function DataTable() {
+export default function DataTable({
+  isLoading,
+  data,
+  limit,
+  page,
+  setPage,
+  setLimit,
+}: {
+  isLoading: boolean;
+  data: PublicGistsResObjI[];
+  limit: number;
+  page: number;
+  setPage: (page: number) => void;
+  setLimit: (limit: number) => void;
+}) {
   return (
     <>
       <TableContainer>
@@ -151,49 +61,92 @@ export default function DataTable() {
               </TableCell>
               {columns.map((column) => (
                 <TableCell
-                  key={column.field}
+                  key={column}
                   sx={{
                     backgroundColor: lighten(PRIMARY_COLOR, 0.7),
                     fontWeight: "bold",
                     color: PRIMARY_COLOR,
                   }}
                 >
-                  {column.headerName}
+                  {column}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {rows.map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      // indeterminate={numSelected > 0 && numSelected < rowCount}
-                      // checked={rowCount > 0 && numSelected === rowCount}
-                      // onChange={onSelectAllClick}
-                      style={{ color: PRIMARY_COLOR }}
-                    />
-                  </TableCell>
-                  {columns.map((column) => {
-                    const value = row[column.field];
-                    console.log("value", value);
-                    return <TableCell key={column.field}>{value}</TableCell>;
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
+          {isLoading ? (
+            <CircularProgress
+              size={"1.5em"}
+              style={{ marginTop: "5px", color: PRIMARY_COLOR }}
+            />
+          ) : (
+            <TableBody>
+              {data.map((row) => {
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.owner.avatar_url}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        // indeterminate={numSelected > 0 && numSelected < rowCount}
+                        // checked={rowCount > 0 && numSelected === rowCount}
+                        // onChange={onSelectAllClick}
+                        style={{ color: PRIMARY_COLOR }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Box
+                        sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                      >
+                        <Avatar
+                          src={row.owner.avatar_url}
+                          sx={{ height: 30, width: 30 }}
+                        />{" "}
+                        {row.owner.login}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {moment(row.created_at).format(LONG_DATE_FORMAT)}
+                    </TableCell>
+                    <TableCell>
+                      {moment(row.created_at).format(TIME_FORMAT)}
+                    </TableCell>
+                    <TableCell>{row.description}</TableCell>
+                    <TableCell>{Object.keys(row.files)[0]}</TableCell>
+                    <TableCell>
+                      <span>
+                        <AiOutlineStar
+                          size={20}
+                          style={{ marginRight: 5, cursor: "pointer" }}
+                        />
+                        <AiOutlineFork
+                          size={20}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"
-        count={rows.length}
-        rowsPerPage={10}
-        page={1}
-        onPageChange={() => {}}
-        onRowsPerPageChange={() => {}}
+        count={3000}
+        rowsPerPage={limit}
+        page={page}
+        onPageChange={(e: unknown, page: number) => {
+          setPage(Number(page));
+        }}
+        onRowsPerPageChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setLimit(Number(e.target.value));
+          setPage(1);
+        }}
       />
     </>
   );
