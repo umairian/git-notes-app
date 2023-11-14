@@ -11,13 +11,16 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { PRIMARY_COLOR } from "../../constants/theme";
 import HeaderSearchBar from "../Header/HeaderSearchBar";
-import { Button } from "@mui/material";
 import CustomButton from "../Buttons/CustomButton";
+import config from "../../config";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  // Configuration Variables
+
+  // State Variables
+  const [isLoggedIn] = React.useState(false);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -86,7 +89,15 @@ export default function Header() {
               </Menu>
             </Box>
           ) : (
-            <CustomButton colorScheme="light">Login</CustomButton>
+            <CustomButton
+              colorScheme="light"
+              onClick={() => {
+                window.location.href =
+                  `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://localhost:5173/authorized&scope=user`;
+              }}
+            >
+              Login
+            </CustomButton>
           )}
         </Toolbar>
       </Container>

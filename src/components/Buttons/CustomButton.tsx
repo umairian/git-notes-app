@@ -1,5 +1,6 @@
 import { Button, ButtonProps, darken, lighten, styled } from "@mui/material";
 import { PRIMARY_COLOR } from "../../constants/theme";
+import { MouseEventHandler } from "react";
 
 type colorSchemeType = "light" | "dark";
 
@@ -23,11 +24,13 @@ const CustomColorButton = styled(Button)<
 export default function CustomButton({
   children,
   colorScheme,
+  onClick,
 }: {
   children: React.ReactElement | React.ReactElement[] | string;
   colorScheme: colorSchemeType;
+  onClick?: MouseEventHandler<HTMLButtonElement>
 }) {
   return (
-    <CustomColorButton colorScheme={colorScheme}>{children}</CustomColorButton>
+    <CustomColorButton colorScheme={colorScheme} onClick={onClick}>{children}</CustomColorButton>
   );
 }
