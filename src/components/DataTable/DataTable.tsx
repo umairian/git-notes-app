@@ -86,7 +86,7 @@ export default function DataTable({
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.owner.avatar_url}
+                    key={row.id}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
