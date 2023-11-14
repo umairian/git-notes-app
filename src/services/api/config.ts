@@ -13,3 +13,7 @@ axiosInstance.interceptors.request.use(function (config) {
   config.headers["Accept"] = "application/vnd.github+json";
   return config;
 });
+
+export const customBackendAxiosInstance = axios.create({
+  baseURL: config.CUSTOM_BACKEND_URL,
+});

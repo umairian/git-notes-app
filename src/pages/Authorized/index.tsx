@@ -1,8 +1,32 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
 import { PRIMARY_COLOR } from "../../constants/theme";
+import { useMutation } from "@tanstack/react-query";
+import { loginApi } from "../../services/api/Auth";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Authorized() {
+  const navigate = useNavigate();
+
+  const { mutate } = useMutation({
+    mutationFn: loginApi,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: ({ data }) => {
+      console.log(data);
+      navigate("/");
+    },
+  });
+
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      mutate({ code });
+    }
+  }, []);
+
   return (
     <AppLayout>
       <Box
