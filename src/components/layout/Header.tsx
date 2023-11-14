@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { PRIMARY_COLOR } from "../../constants/theme";
 import HeaderSearchBar from "../Header/HeaderSearchBar";
 import { Button } from "@mui/material";
+import CustomButton from "../Buttons/CustomButton";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -85,9 +86,7 @@ export default function Header() {
               </Menu>
             </Box>
           ) : (
-            <Button variant="contained" color="success">
-              Login
-            </Button>
+            <CustomButton colorScheme="light">Login</CustomButton>
           )}
         </Toolbar>
       </Container>
