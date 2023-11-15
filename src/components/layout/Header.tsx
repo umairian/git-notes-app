@@ -11,12 +11,20 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { PRIMARY_COLOR } from "../../constants/theme";
 import HeaderSearchBar from "../Header/HeaderSearchBar";
-import { Button } from "@mui/material";
+import CustomButton from "../Buttons/CustomButton";
+import config from "../../config";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  // Configuration Variables
+
+  // Store
+  const { isLoggedIn, user } = useSelector((store: RootState) => store.auth);
+
+  // State Variables
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -58,7 +66,7 @@ export default function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Umair Syed" src="/static/images/avatar/3.jpg" />
+                  <Avatar alt="Umair Syed" src={user?.avatar_url} />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -85,9 +93,14 @@ export default function Header() {
               </Menu>
             </Box>
           ) : (
-            <Button variant="contained" color="success">
+            <CustomButton
+              colorScheme="light"
+              onClick={() => {
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://localhost:5173/authorized&scope=user`;
+              }}
+            >
               Login
-            </Button>
+            </CustomButton>
           )}
         </Toolbar>
       </Container>
