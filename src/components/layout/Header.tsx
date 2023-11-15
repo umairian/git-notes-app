@@ -5,7 +5,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -64,10 +63,10 @@ export default function Header() {
 
   return (
     <AppBar position="static" sx={{ background: PRIMARY_COLOR }}>
-      <Container maxWidth="xl">
+      <Box marginX={12}>
         <Toolbar
-          disableGutters
-          sx={{ justifyContent: "space-between", paddingX: { xs: 2, md: 10 } }}
+          disableGutters={true}
+          sx={{ justifyContent: "space-between", }}
         >
           <Typography
             variant="h6"
@@ -124,14 +123,14 @@ export default function Header() {
             <CustomButton
               colorScheme="light"
               onClick={() => {
-                window.location.href = `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://localhost:5173/authorized&scope=user`;
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://127.0.0.1:5173/authorized&scope=user`;
               }}
             >
               Login
             </CustomButton>
           )}
         </Toolbar>
-      </Container>
+      </Box>
     </AppBar>
   );
 }

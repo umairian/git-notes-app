@@ -1,10 +1,10 @@
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import GistCard from "../Cards/GistCard";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicGistsApi } from "../../services/api/Gist";
-import { PRIMARY_COLOR } from "../../constants/theme";
 import { PublicGistsResObjI } from "../../types/Gist.t";
+import GistCardSkeleton from "../Skeletons/GistCardSkeleton";
 
 export default function GridView() {
   const targetRef = useRef(null);
@@ -13,7 +13,7 @@ export default function GridView() {
   const [gists, setGists] = useState<PublicGistsResObjI[]>([]);
   const [page, setPage] = useState(1);
 
-  const { isInitialLoading, data, error, refetch, } = useQuery({
+  const { isLoading, data, error, refetch } = useQuery({
     queryKey: ["publicGists", { page, limit: 20 }],
     queryFn: getPublicGistsApi,
   });
@@ -25,18 +25,18 @@ export default function GridView() {
   }, [data, error]);
 
   useEffect(() => {
-    console.log(page)
+    console.log(page);
     refetch();
   }, [page]);
 
   const handleIntersection: IntersectionObserverCallback = useCallback(
     (entries) => {
       const target = entries[0];
-      if (target.isIntersecting && !isInitialLoading) {
+      if (target.isIntersecting && !isLoading) {
         setPage((currentPage) => currentPage + 1);
       }
     },
-    [isInitialLoading]
+    [isLoading]
   );
 
   useEffect(() => {
@@ -54,11 +54,12 @@ export default function GridView() {
 
   return (
     <Box>
-      {isInitialLoading && !gists ? (
-        <CircularProgress
-          size={"1.5em"}
-          style={{ marginTop: "5px", color: PRIMARY_COLOR }}
-        />
+      {isLoading && !gists.length ? (
+        <Grid container spacing={4}>
+          {Array.from({ length: 10}).map((val, index) => <Grid item md={4} key={index}>
+            <GistCardSkeleton />
+          </Grid>)}
+        </Grid>
       ) : (
         <Grid container spacing={4}>
           {gists.map((gist: PublicGistsResObjI) => (
