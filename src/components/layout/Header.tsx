@@ -13,13 +13,16 @@ import { PRIMARY_COLOR } from "../../constants/theme";
 import HeaderSearchBar from "../Header/HeaderSearchBar";
 import CustomButton from "../Buttons/CustomButton";
 import config from "../../config";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/slices/Auth";
+import { PersonRounded, LogoutRounded } from "@mui/icons-material";
 
 export default function Header() {
   // Configuration Variables
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Store
   const { isLoggedIn, user } = useSelector((store: RootState) => store.auth);
@@ -36,6 +39,28 @@ export default function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const menuItems = React.useMemo(
+    () => [
+      {
+        label: "Profile",
+        onClick: () => {
+          handleCloseUserMenu();
+          navigate("/profile");
+        },
+        icon: <PersonRounded />,
+      },
+      {
+        label: "Logout",
+        onClick: () => {
+          handleCloseUserMenu();
+          dispatch(logout());
+        },
+        icon: <LogoutRounded />,
+      },
+    ],
+    []
+  );
 
   return (
     <AppBar position="static" sx={{ background: PRIMARY_COLOR }}>
@@ -85,9 +110,12 @@ export default function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
+                {menuItems.map((item) => (
+                  <MenuItem key={item.label} onClick={item.onClick}>
+                    <Box display={"flex"} alignItems={"center"} gap={1}>
+                      {item.icon}{" "}
+                      <Typography textAlign="center">{item.label}</Typography>
+                    </Box>
                   </MenuItem>
                 ))}
               </Menu>
