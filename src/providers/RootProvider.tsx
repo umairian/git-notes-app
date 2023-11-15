@@ -1,10 +1,13 @@
 import BrowserRouterProvider from "./BrowserRouterProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
+import StoreProvider from "./StoreProvider";
 
 export default function RootProvider() {
   return (
-    <ReactQueryProvider>
-      <BrowserRouterProvider />
-    </ReactQueryProvider>
+    <StoreProvider>
+      <ReactQueryProvider>
+        <BrowserRouterProvider />
+      </ReactQueryProvider>
+    </StoreProvider>
   );
 }

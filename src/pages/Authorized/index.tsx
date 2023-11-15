@@ -5,9 +5,12 @@ import { useMutation } from "@tanstack/react-query";
 import { loginApi } from "../../services/api/Auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/slices/Auth";
 
 export default function Authorized() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { mutate } = useMutation({
     mutationFn: loginApi,
@@ -16,6 +19,7 @@ export default function Authorized() {
     },
     onSuccess: ({ data }) => {
       console.log(data);
+      dispatch(login({ accessToken: data.access_token, user: data.user }));
       navigate("/");
     },
   });

@@ -13,14 +13,18 @@ import { PRIMARY_COLOR } from "../../constants/theme";
 import HeaderSearchBar from "../Header/HeaderSearchBar";
 import CustomButton from "../Buttons/CustomButton";
 import config from "../../config";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export default function Header() {
   // Configuration Variables
 
+  // Store
+  const { isLoggedIn, user } = useSelector((store: RootState) => store.auth);
+
   // State Variables
-  const [isLoggedIn] = React.useState(false);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -62,7 +66,7 @@ export default function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Umair Syed" src="/static/images/avatar/3.jpg" />
+                  <Avatar alt="Umair Syed" src={user?.avatar_url} />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -92,8 +96,7 @@ export default function Header() {
             <CustomButton
               colorScheme="light"
               onClick={() => {
-                window.location.href =
-                  `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://localhost:5173/authorized&scope=user`;
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_APP_ID}&redirect_uri=http://localhost:5173/authorized&scope=user`;
               }}
             >
               Login

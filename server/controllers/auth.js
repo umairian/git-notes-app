@@ -26,7 +26,16 @@ const controller = {
         throw { status: 500, message: data.error };
       }
 
-      res.status(200).send(data);
+      const { data: userData } = await axios.get(
+        "https://api.github.com/user",
+        {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        }
+      );
+
+      res.status(200).send({ ...data, user: userData });
     } catch (err) {
       console.log(err);
       res
