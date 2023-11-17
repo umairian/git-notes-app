@@ -13,13 +13,21 @@ const CustomColorButton = styled(Button)<
   backgroundColor:
     colorScheme === "light" ? theme.palette.common.white : PRIMARY_COLOR,
   "&:hover": {
-    color: lighten(colorScheme === "light" ? PRIMARY_COLOR : theme.palette.common.white, 0.1),
+    color: lighten(
+      colorScheme === "light" ? PRIMARY_COLOR : theme.palette.common.white,
+      0.1
+    ),
     backgroundColor: darken(
       colorScheme === "light" ? theme.palette.common.white : PRIMARY_COLOR,
       0.1
     ),
   },
-  border: colorScheme === "light" ? `1px solid ${PRIMARY_COLOR}` : "1px solid white"
+  border:
+    colorScheme === "light" ? `1px solid ${PRIMARY_COLOR}` : "1px solid white",
+  "&:disabled": {
+    backgroundColor: "lightgray",
+    color: "darkgray"
+  }
 }));
 
 export default function CustomButton({
@@ -27,13 +35,25 @@ export default function CustomButton({
   colorScheme,
   onClick,
   style,
+  type,
+  disabled,
 }: {
   children: React.ReactElement | React.ReactElement[] | string;
   colorScheme: colorSchemeType;
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  style?: CSSProperties
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  style?: CSSProperties;
+  type?: "submit";
+  disabled?: boolean;
 }) {
   return (
-    <CustomColorButton colorScheme={colorScheme} onClick={onClick} style={style}>{children}</CustomColorButton>
+    <CustomColorButton
+      colorScheme={colorScheme}
+      onClick={onClick}
+      style={style}
+      type={type}
+      disabled={disabled}
+    >
+      {children}
+    </CustomColorButton>
   );
 }

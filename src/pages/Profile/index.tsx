@@ -1,6 +1,7 @@
-import { Avatar, Box, CircularProgress, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "../../layouts/AppLayout";
 import { RootState } from "../../store";
 import CustomButton from "../../components/Buttons/CustomButton";
@@ -9,8 +10,12 @@ import { PublicGistsResObjI } from "../../types/Gist.t";
 import { getUserGistsApi } from "../../services/api/Gist";
 import { useEffect, useState } from "react";
 import { PRIMARY_COLOR } from "../../constants/theme";
+import Heading from "../../components/Headings/Heading";
 
 export default function Profile() {
+  // Configuration Variables
+  const navigate = useNavigate();
+
   // Store
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
 
@@ -49,9 +54,11 @@ export default function Profile() {
           }}
         >
           <Avatar sx={{ height: 300, width: 300 }} src={user?.avatar_url} />
-          <Typography sx={{ fontSize: 32, fontWeight: "bold", marginTop: 2 }}>
-            {user?.name}
-          </Typography>
+          {user && (
+            <Heading size="h1" sx={{ marginTop: 2 }}>
+              {user.name}
+            </Heading>
+          )}
           <CustomButton
             colorScheme="light"
             style={{ marginTop: 15 }}
@@ -72,7 +79,14 @@ export default function Profile() {
           }}
         >
           <Box display={"flex"} justifyContent={"end"}>
-            <CustomButton colorScheme="dark">Create New Gist</CustomButton>
+            <CustomButton
+              colorScheme="dark"
+              onClick={() => {
+                navigate("/gists/create");
+              }}
+            >
+              Create New Gist
+            </CustomButton>
           </Box>
           {isLoading ? (
             <Box

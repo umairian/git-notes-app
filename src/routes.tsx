@@ -4,6 +4,7 @@ import PageNotFound from "./pages/404";
 import Authorized from "./pages/Authorized";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/Routes/PrivateRoute";
+import CreateGistPage from "./pages/CreateGist";
 
 export const routes = createBrowserRouter([
     {
@@ -18,5 +19,9 @@ export const routes = createBrowserRouter([
     {
         path: "/profile",
         element: <PrivateRoute><Profile /></PrivateRoute>,
+    },
+    {
+        path: "/gists/create",
+        element: <PrivateRoute><CreateGistPage /></PrivateRoute>,
     },
 ]);

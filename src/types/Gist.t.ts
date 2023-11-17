@@ -16,5 +16,16 @@ export interface PublicGistsResObjI {
 }
 
 export type PublicGistsQueryKey = [string, { page: number; limit: number }];
-export type PublicSingleGistQueryKey = [string, { gistId: string; accessToken: string | null; }];
+export type PublicSingleGistQueryKey = [
+  string,
+  { gistId: string; accessToken: string | null }
+];
 export type UserGistsQueryKey = [string, { accessToken: string }];
+
+export interface CreateGistI {
+  name: string;
+  description: string;
+  content: string;
+}
+
+export type GistFilesI = CreateGistI[] | [];
