@@ -24,7 +24,6 @@ export type UserGistsQueryKey = [string, { accessToken: string }];
 
 export interface CreateGistI {
   name: string;
-  description: string;
   content: string;
 }
 

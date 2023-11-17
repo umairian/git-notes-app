@@ -3,11 +3,11 @@ import { IoMdClose } from "react-icons/io";
 
 export default function FileCard({
   fileName,
-  fileDescription,
+  content,
   onClose,
 }: {
   fileName: string;
-  fileDescription: string;
+  content: string;
   onClose: (e: Event) => void;
 }) {
   return (
@@ -22,7 +22,7 @@ export default function FileCard({
             <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>
               {fileName}
             </Typography>
-            <Typography sx={{ color: "gray" }}>{fileDescription}</Typography>
+            <Typography sx={{ color: "gray" }}>{content}</Typography>
           </Box>
           <IoMdClose
             style={{ cursor: "pointer", fontSize: 25 }}

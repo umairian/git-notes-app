@@ -28,7 +28,18 @@ export default function CreateGistPage() {
       content: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
-      setFiles((currentFiles: GistFilesI) => [...currentFiles, values]);
+      setFiles((currentFiles: GistFilesI) => [
+        ...currentFiles,
+        { name: values.name, content: values.content },
+      ]);
+      formik.setValues({
+        name: "",
+        description: values.description,
+        content: "",
+      });
+      formik.setTouched({
+        description: true,
+      })
     },
   });
   return (
@@ -106,7 +117,7 @@ export default function CreateGistPage() {
           {files.map((file: CreateGistI) => (
             <FileCard
               fileName={file.name}
-              fileDescription={file.description}
+              content={file.content}
               onClose={() => {
                 setFiles(
                   files.filter((obj: CreateGistI) => obj.name !== file.name)
