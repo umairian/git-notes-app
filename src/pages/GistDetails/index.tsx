@@ -10,6 +10,8 @@ import {
 import AppLayout from "../../layouts/AppLayout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  forkGistApi,
+  getGistForksApi,
   getGistStarApi,
   getSinglePublicGistApi,
   starGistApi,
@@ -54,6 +56,12 @@ export default function GistDetailsPage() {
     retry: false,
   });
 
+  const { data: forksData } = useQuery({
+    queryKey: ["gistForks", { gistId: gistId as string, accessToken }],
+    queryFn: getGistForksApi,
+    retry: false,
+  });
+
   const { mutate } = useMutation({
     mutationFn: starGistApi,
     onError: (error) => {
@@ -64,13 +72,23 @@ export default function GistDetailsPage() {
     },
   });
 
-  const { mutate: unStar, } = useMutation({
+  const { mutate: unStar } = useMutation({
     mutationFn: unStarGistApi,
     onError: (error) => {
       console.log(error);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["gistStar"] });
+    },
+  });
+
+  const { mutate: fork } = useMutation({
+    mutationFn: forkGistApi,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["singleGist"] });
     },
   });
 
@@ -131,8 +149,10 @@ export default function GistDetailsPage() {
                   <ActionIconWrapper
                     text={starred ? "Starred" : "Unstarred"}
                     icon={
-                      starLoading ? <CircularProgress size={20} /> : starred ? (
-                        <AiFillStar size={20} />
+                      starLoading ? (
+                        <CircularProgress size={20} />
+                      ) : starred ? (
+                        <AiFillStar size={20} color="blue" />
                       ) : (
                         <AiOutlineStar size={20} />
                       )
@@ -152,9 +172,14 @@ export default function GistDetailsPage() {
                     }}
                   />
                   <ActionIconWrapper
-                    text={gist.forks.length.toString()}
+                    text={forksData?.data.length.toString()}
                     icon={<AiOutlineFork size={20} />}
-                    onClick={() => {}}
+                    onClick={() => {
+                      fork({
+                        accessToken: accessToken as string,
+                        gistId: gistId as string,
+                      });
+                    }}
                   />
                 </Box>
               </Box>

@@ -77,3 +77,25 @@ export function unStarGistApi({ accessToken, gistId }: StarGistQueryKey) {
     }
   );
 }
+
+export function forkGistApi({ accessToken, gistId }: StarGistQueryKey) {
+  return axiosInstance.post(
+    `/gists/${gistId}/forks`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+}
+
+export function getGistForksApi({
+  queryKey: [, { accessToken, gistId }],
+}: QueryFunctionContext<PublicSingleGistQueryKey>) {
+  return axiosInstance.get(`/gists/${gistId}/forks`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
