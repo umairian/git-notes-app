@@ -5,6 +5,7 @@ import Authorized from "./pages/Authorized";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import CreateGistPage from "./pages/CreateGist";
+import GistDetailsPage from "./pages/GistDetails";
 
 export const routes = createBrowserRouter([
     {
@@ -23,5 +24,9 @@ export const routes = createBrowserRouter([
     {
         path: "/gists/create",
         element: <PrivateRoute><CreateGistPage /></PrivateRoute>,
+    },
+    {
+        path: "/gists/:gistId",
+        element: <PrivateRoute><GistDetailsPage /></PrivateRoute>,
     },
 ]);

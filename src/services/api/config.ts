@@ -19,7 +19,7 @@ axiosInstance.interceptors.response.use(
       localStorage.clear();
       window.location.href = "/";
     }
-    return error;
+    return Promise.reject(error);
   }
 );
 

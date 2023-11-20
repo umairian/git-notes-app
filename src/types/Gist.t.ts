@@ -3,9 +3,11 @@ export interface PublicGistsResObjI {
   created_at: Date;
   description: string;
   owner: {
+    id: string;
     login: string;
     avatar_url: string;
   };
+  forks: [];
   files: {
     [key: string]: {
       filename: string;
@@ -36,3 +38,7 @@ export interface CreateGistI {
 }
 
 export type GistFilesI = CreateGistI[] | [];
+export type StarGistQueryKey = {
+  accessToken: string;
+  gistId: string;
+};
