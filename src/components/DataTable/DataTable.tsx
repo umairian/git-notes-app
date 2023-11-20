@@ -12,10 +12,11 @@ import {
   lighten,
 } from "@mui/material";
 import { PRIMARY_COLOR } from "../../constants/theme";
-import { AiOutlineFork, AiOutlineStar } from "react-icons/ai";
+import { AiFillEye, AiOutlineFork, AiOutlineStar } from "react-icons/ai";
 import { PublicGistsResObjI } from "../../types/Gist.t";
 import moment from "moment";
 import { LONG_DATE_FORMAT, TIME_FORMAT } from "../../constants/date";
+import { Link } from "react-router-dom";
 
 const columns = [
   "Name",
@@ -70,12 +71,7 @@ export default function DataTable({
             <TableBody>
               {data.map((row) => {
                 return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.id}
-                  >
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     <TableCell>
                       <Box
                         sx={{ display: "flex", gap: 1, alignItems: "center" }}
@@ -105,6 +101,12 @@ export default function DataTable({
                           size={20}
                           style={{ cursor: "pointer" }}
                         />
+                        <Link
+                          to={`/gists/${row.id}`}
+                          style={{ color: "black" }}
+                        >
+                          <AiFillEye size={20} style={{ cursor: "pointer" }} />
+                        </Link>
                       </span>
                     </TableCell>
                   </TableRow>
