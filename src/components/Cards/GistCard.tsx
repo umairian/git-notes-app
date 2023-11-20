@@ -6,8 +6,12 @@ import { useEffect, useState } from "react";
 import { getSinglePublicGistApi } from "../../services/api/Gist";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function GistCard({ gist }: { gist: PublicGistsResObjI }) {
+  // Configuration Variables
+  const navigate = useNavigate();
+
   // Store
   const { accessToken } = useSelector((state: RootState) => state.auth);
 
@@ -35,7 +39,11 @@ export default function GistCard({ gist }: { gist: PublicGistsResObjI }) {
     .join("\n");
 
   return (
-    <Card elevation={2} sx={{ width: "100%" }}>
+    <Card
+      elevation={2}
+      sx={{ width: "100%", cursor: "pointer" }}
+      onClick={() => navigate(`/gists/${gist.id}`)}
+    >
       <CardContent>
         {isLoading ? (
           <Box sx={{ height: 160, width: "100%" }}>

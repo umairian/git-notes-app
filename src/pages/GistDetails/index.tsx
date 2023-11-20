@@ -6,11 +6,13 @@ import {
   Divider,
   Skeleton,
   Snackbar,
+  TextField,
   Typography,
 } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteGistApi,
   forkGistApi,
   getGistForksApi,
   getGistStarApi,
@@ -18,7 +20,7 @@ import {
   starGistApi,
   unStarGistApi,
 } from "../../services/api/Gist";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useEffect, useState } from "react";
@@ -38,15 +40,18 @@ export default function GistDetailsPage() {
   // Configuration Variables
   const { gistId } = useParams();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Store
-  const { accessToken } = useSelector((state: RootState) => state.auth);
+  const { accessToken, user } = useSelector((state: RootState) => state.auth);
 
   // State Variables
   const [gist, setGist] = useState<PublicGistsResObjI | null>(null);
   const [starred, setStarred] = useState(false);
   const [snackbarOpened, setSnackbarOpened] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [edit, setEdit] = useState(false);
+  const [editValue, setEditValue] = useState("");
 
   const { isLoading, data, error } = useQuery({
     queryKey: ["singleGist", { gistId: gistId as string, accessToken }],
@@ -97,6 +102,18 @@ export default function GistDetailsPage() {
     },
   });
 
+  const { mutate: deleteGist } = useMutation({
+    mutationFn: deleteGistApi,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      setSnackbarOpened(true);
+      setSnackbarMessage("Gist deleted successfully");
+      navigate(`/profile`);
+    },
+  });
+
   useEffect(() => {
     if (isStarError) {
       setStarred(false);
@@ -111,13 +128,18 @@ export default function GistDetailsPage() {
     }
   }, [data, error]);
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
 
     setSnackbarOpened(false);
   };
+
+  const userOwnGist = user?.id === gist?.owner.id;
 
   return (
     <AppLayout>
@@ -156,16 +178,28 @@ export default function GistDetailsPage() {
                   createdAt={gist.created_at}
                 />
                 <Box display={"flex"} gap={2} alignItems={"center"}>
-                  <ActionIconWrapper
-                    text="Edit"
-                    icon={<AiFillEdit size={20} />}
-                    onClick={() => {}}
-                  />
-                  <ActionIconWrapper
-                    text="Delete"
-                    icon={<AiFillDelete size={20} />}
-                    onClick={() => {}}
-                  />
+                  {userOwnGist && (
+                    <>
+                      <ActionIconWrapper
+                        text="Edit"
+                        icon={<AiFillEdit size={20} />}
+                        onClick={() => {
+                          setEdit(true);
+                        }}
+                      />
+                      <ActionIconWrapper
+                        text="Delete"
+                        icon={<AiFillDelete size={20} />}
+                        onClick={() => {
+                          confirm("Are you sure to delete the gist?");
+                          deleteGist({
+                            accessToken: accessToken as string,
+                            gistId: gistId as string,
+                          });
+                        }}
+                      />
+                    </>
+                  )}
                   <ActionIconWrapper
                     text={starred ? "Starred" : "Unstarred"}
                     icon={
@@ -205,7 +239,8 @@ export default function GistDetailsPage() {
               </Box>
             )}
             {gist &&
-              Object.keys(gist.files).map((fileName) => (
+              Object.keys(gist.files).map((fileName) => {
+                return (
                 <Card elevation={2} sx={{ width: "100%" }}>
                   <CardContent>
                     <Box display={"flex"} alignItems={"center"} gap={1} m={1}>
@@ -216,28 +251,41 @@ export default function GistDetailsPage() {
                       </Typography>
                     </Box>
                     <Divider />
-                    <pre
-                      style={{
-                        fontSize: 12,
-                        overflowX: "scroll",
-                      }}
-                    >
-                      {gist.files[fileName].content
-                        ?.split("\n")
-                        .map((line, index) => (
-                          <div key={index}>
-                            <span style={{ marginRight: "1em", color: "gray" }}>
-                              {index + 1}.
-                            </span>
-                            {line}
-                          </div>
-                        ))}
-                    </pre>
+                    {edit ? (
+                      <TextField
+                        multiline
+                        rows={10}
+                        fullWidth
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        variant="outlined"
+                      />
+                    ) : (
+                      <pre
+                        style={{
+                          fontSize: 12,
+                          overflowX: "scroll",
+                        }}
+                      >
+                        {gist.files[fileName].content
+                          ?.split("\n")
+                          .map((line, index) => (
+                            <div key={index}>
+                              <span
+                                style={{ marginRight: "1em", color: "gray" }}
+                              >
+                                {index + 1}.
+                              </span>
+                              {line}
+                            </div>
+                          ))}
+                      </pre>
+                    )}
 
                     <Divider sx={{ marginY: 2 }} />
                   </CardContent>
                 </Card>
-              ))}
+              )})}
           </>
         )}
       </Box>

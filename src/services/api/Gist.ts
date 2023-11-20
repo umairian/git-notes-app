@@ -99,3 +99,14 @@ export function getGistForksApi({
     },
   });
 }
+
+export function deleteGistApi({ accessToken, gistId }: StarGistQueryKey) {
+  return axiosInstance.delete(
+    `/gists/${gistId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+}

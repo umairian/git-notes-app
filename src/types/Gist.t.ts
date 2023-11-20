@@ -3,6 +3,7 @@ export interface PublicGistsResObjI {
   created_at: Date;
   description: string;
   owner: {
+    id: string;
     login: string;
     avatar_url: string;
   };
