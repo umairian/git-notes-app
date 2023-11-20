@@ -5,6 +5,7 @@ import {
   CircularProgress,
   Divider,
   Skeleton,
+  Snackbar,
   Typography,
 } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
@@ -44,6 +45,8 @@ export default function GistDetailsPage() {
   // State Variables
   const [gist, setGist] = useState<PublicGistsResObjI | null>(null);
   const [starred, setStarred] = useState(false);
+  const [snackbarOpened, setSnackbarOpened] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const { isLoading, data, error } = useQuery({
     queryKey: ["singleGist", { gistId: gistId as string, accessToken }],
@@ -88,7 +91,9 @@ export default function GistDetailsPage() {
       console.log(error);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["singleGist"] });
+      setSnackbarOpened(true);
+      setSnackbarMessage("Gist forked successfully");
+      queryClient.invalidateQueries({ queryKey: ["gistForks"] });
     },
   });
 
@@ -105,6 +110,15 @@ export default function GistDetailsPage() {
       setGist(data.data);
     }
   }, [data, error]);
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpened(false);
+  };
+
   return (
     <AppLayout>
       <Box
@@ -113,6 +127,12 @@ export default function GistDetailsPage() {
           paddingTop: 3,
         }}
       >
+        <Snackbar
+          open={snackbarOpened}
+          autoHideDuration={5000}
+          message={snackbarMessage}
+          onClose={handleClose}
+        />
         {isLoading || !gist ? (
           <Box sx={{ height: 300, width: "100%" }}>
             {Array.from({ length: 16 }).map(() => (
