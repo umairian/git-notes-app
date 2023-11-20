@@ -21,6 +21,14 @@ export type PublicSingleGistQueryKey = [
   { gistId: string; accessToken: string | null }
 ];
 export type UserGistsQueryKey = [string, { accessToken: string }];
+export type CreateGistQueryKey = {
+  accessToken: string;
+  body: {
+    description: string;
+    public: boolean;
+    files: { [key: string]: { content: string } };
+  };
+};
 
 export interface CreateGistI {
   name: string;

@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Box, FormLabel, TextField, Checkbox } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
 import Heading from "../../components/Headings/Heading";
 import CustomButton from "../../components/Buttons/CustomButton";
@@ -8,16 +8,35 @@ import FileCard from "../../components/Cards/FileCard";
 import { CreateGistI, GistFilesI } from "../../types/Gist.t";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { createGistApi } from "../../services/api/Gist";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 export default function CreateGistPage() {
+  // Configuration Variables
+  const navigate = useNavigate();
+
+  // Store
+  const { accessToken } = useSelector((state: RootState) => state.auth);
+
   // State Variables
   const [files, setFiles] = useState<GistFilesI>([]);
+
+  const { mutateAsync } = useMutation({
+    mutationFn: createGistApi,
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
       content: "",
+      public: false,
     },
     validationSchema: Yup.object().shape({
       description: Yup.string().min(2, "Too Short!").required("Required"),
@@ -35,13 +54,43 @@ export default function CreateGistPage() {
       formik.setValues({
         name: "",
         description: values.description,
+        public: false,
         content: "",
       });
       formik.setTouched({
         description: true,
-      })
+      });
     },
   });
+
+  async function onCreateGistClick() {
+    try {
+      if (accessToken) {
+        const data = await mutateAsync({
+          accessToken,
+          body: {
+            description: formik.values.description,
+            public: true,
+            files: files.reduce(
+              (
+                acc: { [key: string]: { content: string } },
+                obj: CreateGistI
+              ) => {
+                acc[`'${obj.name}'`] = { content: obj.content };
+                return acc;
+              },
+              {}
+            ),
+          },
+        });
+        console.log(data)
+        // navigate("/profile");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <AppLayout>
       <Box sx={{ width: "100%", marginTop: 6, display: "flex", gap: 5 }}>
@@ -93,6 +142,14 @@ export default function CreateGistPage() {
               rows={8}
               sx={{ width: "100%", marginTop: 3 }}
             />
+            <Box display={"flex"} alignItems={"center"} mt={3}>
+              <Checkbox
+                value={formik.values.public}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <FormLabel>Make the gist public</FormLabel>
+            </Box>
             <Box
               mt={3}
               display={"flex"}
@@ -107,7 +164,11 @@ export default function CreateGistPage() {
               >
                 Add File
               </CustomButton>
-              <CustomButton colorScheme="dark" disabled={files.length === 0}>
+              <CustomButton
+                colorScheme="dark"
+                disabled={files.length === 0}
+                onClick={onCreateGistClick}
+              >
                 Create Gist
               </CustomButton>
             </Box>

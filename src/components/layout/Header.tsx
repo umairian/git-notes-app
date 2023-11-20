@@ -17,6 +17,7 @@ import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/slices/Auth";
 import { PersonRounded, LogoutRounded } from "@mui/icons-material";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
   // Configuration Variables
@@ -64,25 +65,24 @@ export default function Header() {
   return (
     <AppBar position="static" sx={{ background: PRIMARY_COLOR }}>
       <Box marginX={12}>
-        <Toolbar
-          disableGutters={true}
-          sx={{ justifyContent: "space-between", }}
-        >
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Git Notes
-          </Typography>
+        <Toolbar disableGutters={true} sx={{ justifyContent: "space-between" }}>
+          <NavLink to={"/"}>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="#app-bar-with-responsive-menu"
+              sx={{
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "white",
+                textDecoration: "none",
+              }}
+            >
+              Git Notes
+            </Typography>
+          </NavLink>
 
           <HeaderSearchBar />
 

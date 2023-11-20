@@ -1,5 +1,6 @@
 import config from "../../config";
 import {
+  CreateGistQueryKey,
   PublicGistsQueryKey,
   PublicSingleGistQueryKey,
   UserGistsQueryKey,
@@ -16,10 +17,11 @@ export function getPublicGistsApi({
 export function getSinglePublicGistApi({
   queryKey: [, { gistId, accessToken }],
 }: QueryFunctionContext<PublicSingleGistQueryKey>) {
-  console.log(config.GITHUB_PERSONAL_ACCESS_TOKEN)
   return axiosInstance.get(`/gists/${gistId}`, {
     headers: {
-      Authorization: `Bearer ${accessToken ? accessToken : config.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${
+        accessToken ? accessToken : config.GITHUB_PERSONAL_ACCESS_TOKEN
+      }`,
     },
   });
 }
@@ -28,6 +30,14 @@ export function getUserGistsApi({
   queryKey: [, { accessToken }],
 }: QueryFunctionContext<UserGistsQueryKey>) {
   return axiosInstance.get(`/gists`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export function createGistApi({ accessToken, body }: CreateGistQueryKey) {
+  return axiosInstance.post(`/gists`, body, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

@@ -3,10 +3,21 @@ import DataTable from "../DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicGistsApi } from "../../services/api/Gist";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { saveGists } from "../../store/slices/Gist";
+import { RootState } from "../../store";
 
 export default function ListView() {
+  // Configuration variables
+  const dispatch = useDispatch();
+
+  // Store
+  const { currentGists: gists } = useSelector(
+    (state: RootState) => state.gists
+  );
+  console.log("here", gists)
+
   // State Variables
-  const [gists, setGists] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
 
@@ -21,20 +32,20 @@ export default function ListView() {
 
   useEffect(() => {
     if (data) {
-      setGists(data.data);
+      dispatch(saveGists({ gists: data.data }));
     }
   }, [data, error]);
 
   return (
     <Box>
-      <DataTable
+      {gists && <DataTable
         isLoading={isLoading}
         data={gists}
         limit={limit}
         page={page}
         setPage={setPage}
         setLimit={setLimit}
-      />
+      />}
     </Box>
   );
 }

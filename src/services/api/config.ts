@@ -1,5 +1,3 @@
-"use client";
-
 import axios from "axios";
 import config from "../../config";
 
@@ -13,6 +11,17 @@ axiosInstance.interceptors.request.use(function (config) {
   config.headers["Accept"] = "application/vnd.github+json";
   return config;
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.data?.message?.includes("Bad credentials")) {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+    return error;
+  }
+);
 
 export const customBackendAxiosInstance = axios.create({
   baseURL: config.CUSTOM_BACKEND_URL,
