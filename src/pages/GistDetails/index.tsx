@@ -2,35 +2,85 @@ import {
   Box,
   Card,
   CardContent,
+  CircularProgress,
   Divider,
   Skeleton,
   Typography,
 } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
-import { useQuery } from "@tanstack/react-query";
-import { getSinglePublicGistApi } from "../../services/api/Gist";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getGistStarApi,
+  getSinglePublicGistApi,
+  starGistApi,
+  unStarGistApi,
+} from "../../services/api/Gist";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useEffect, useState } from "react";
 import { PublicGistsResObjI } from "../../types/Gist.t";
 import GistCardUserInfo from "../../components/Home/GistCardUserInfo";
-import { AiFillCode } from "react-icons/ai";
+import {
+  AiFillCode,
+  AiFillDelete,
+  AiFillEdit,
+  AiFillStar,
+  AiOutlineFork,
+  AiOutlineStar,
+} from "react-icons/ai";
+import ActionIconWrapper from "../../components/GistDetails/ActionIconWrapper";
 
 export default function GistDetailsPage() {
   // Configuration Variables
   const { gistId } = useParams();
+  const queryClient = useQueryClient();
 
   // Store
   const { accessToken } = useSelector((state: RootState) => state.auth);
 
   // State Variables
   const [gist, setGist] = useState<PublicGistsResObjI | null>(null);
+  const [starred, setStarred] = useState(false);
 
   const { isLoading, data, error } = useQuery({
     queryKey: ["singleGist", { gistId: gistId as string, accessToken }],
     queryFn: getSinglePublicGistApi,
   });
+
+  const { isError: isStarError, isLoading: starLoading } = useQuery({
+    queryKey: ["gistStar", { gistId: gistId as string, accessToken }],
+    queryFn: getGistStarApi,
+    retry: false,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: starGistApi,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gistStar"] });
+    },
+  });
+
+  const { mutate: unStar, } = useMutation({
+    mutationFn: unStarGistApi,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["gistStar"] });
+    },
+  });
+
+  useEffect(() => {
+    if (isStarError) {
+      setStarred(false);
+    } else {
+      setStarred(true);
+    }
+  }, [isStarError]);
 
   useEffect(() => {
     if (data) {
@@ -60,12 +110,54 @@ export default function GistDetailsPage() {
         ) : (
           <>
             {gist && (
-              <GistCardUserInfo
-                avatarUrl={gist.owner.avatar_url}
-                userName={gist.owner.login}
-                fileName={Object.keys(gist.files)[0]}
-                createdAt={gist.created_at}
-              />
+              <Box display={"flex"} justifyContent={"space-between"}>
+                <GistCardUserInfo
+                  avatarUrl={gist.owner.avatar_url}
+                  userName={gist.owner.login}
+                  fileName={Object.keys(gist.files)[0]}
+                  createdAt={gist.created_at}
+                />
+                <Box display={"flex"} gap={2} alignItems={"center"}>
+                  <ActionIconWrapper
+                    text="Edit"
+                    icon={<AiFillEdit size={20} />}
+                    onClick={() => {}}
+                  />
+                  <ActionIconWrapper
+                    text="Delete"
+                    icon={<AiFillDelete size={20} />}
+                    onClick={() => {}}
+                  />
+                  <ActionIconWrapper
+                    text={starred ? "Starred" : "Unstarred"}
+                    icon={
+                      starLoading ? <CircularProgress size={20} /> : starred ? (
+                        <AiFillStar size={20} />
+                      ) : (
+                        <AiOutlineStar size={20} />
+                      )
+                    }
+                    onClick={() => {
+                      if (starred) {
+                        unStar({
+                          accessToken: accessToken as string,
+                          gistId: gistId as string,
+                        });
+                      } else {
+                        mutate({
+                          accessToken: accessToken as string,
+                          gistId: gistId as string,
+                        });
+                      }
+                    }}
+                  />
+                  <ActionIconWrapper
+                    text={gist.forks.length.toString()}
+                    icon={<AiOutlineFork size={20} />}
+                    onClick={() => {}}
+                  />
+                </Box>
+              </Box>
             )}
             {gist &&
               Object.keys(gist.files).map((fileName) => (

@@ -6,6 +6,7 @@ export interface PublicGistsResObjI {
     login: string;
     avatar_url: string;
   };
+  forks: [];
   files: {
     [key: string]: {
       filename: string;
@@ -36,3 +37,7 @@ export interface CreateGistI {
 }
 
 export type GistFilesI = CreateGistI[] | [];
+export type StarGistQueryKey = {
+  accessToken: string;
+  gistId: string;
+};

@@ -3,6 +3,7 @@ import {
   CreateGistQueryKey,
   PublicGistsQueryKey,
   PublicSingleGistQueryKey,
+  StarGistQueryKey,
   UserGistsQueryKey,
 } from "../../types/Gist.t";
 import { axiosInstance } from "./config";
@@ -42,4 +43,37 @@ export function createGistApi({ accessToken, body }: CreateGistQueryKey) {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+}
+
+export function getGistStarApi({
+  queryKey: [, { accessToken, gistId }],
+}: QueryFunctionContext<PublicSingleGistQueryKey>) {
+  return axiosInstance.get(`/gists/${gistId}/star`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export function starGistApi({ accessToken, gistId }: StarGistQueryKey) {
+  return axiosInstance.put(
+    `/gists/${gistId}/star`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+}
+
+export function unStarGistApi({ accessToken, gistId }: StarGistQueryKey) {
+  return axiosInstance.delete(
+    `/gists/${gistId}/star`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 }
