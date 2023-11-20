@@ -1,18 +1,23 @@
-import { Card, CardContent, CircularProgress, Divider } from "@mui/material";
+import { Box, Card, CardContent, Divider, Skeleton } from "@mui/material";
 import GistCardUserInfo from "../Home/GistCardUserInfo";
 import { PublicGistsResObjI } from "../../types/Gist.t";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getSinglePublicGistApi } from "../../services/api/Gist";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 export default function GistCard({ gist }: { gist: PublicGistsResObjI }) {
+  // Store
+  const { accessToken } = useSelector((state: RootState) => state.auth);
+
   // State Variables
   const [fileContent, setFileContent] = useState<PublicGistsResObjI | null>(
     null
   );
 
   const { isLoading, data, error } = useQuery({
-    queryKey: ["publicGist", { gistId: gist.id }],
+    queryKey: ["singleGist", { gistId: gist.id, accessToken }],
     queryFn: getSinglePublicGistApi,
   });
 
@@ -33,7 +38,17 @@ export default function GistCard({ gist }: { gist: PublicGistsResObjI }) {
     <Card elevation={2} sx={{ width: "100%" }}>
       <CardContent>
         {isLoading ? (
-          <CircularProgress size={"1.5em"} />
+          <Box sx={{ height: 160, width: "100%" }}>
+            {Array.from({ length: 8 }).map(() => (
+              <Skeleton
+                animation="wave"
+                variant="rectangular"
+                width={"100%"}
+                height={15}
+                sx={{ marginTop: "5px" }}
+              />
+            ))}
+          </Box>
         ) : (
           <pre
             style={{

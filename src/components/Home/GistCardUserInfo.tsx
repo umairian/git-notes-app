@@ -15,9 +15,9 @@ export default function GistCardUserInfo({
   return (
     <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
       <Avatar src={avatarUrl} sx={{ width: 35, height: 35 }} />
-      <Box>
+      <Box width={"90%"}>
         <Typography
-          sx={(theme) => ({ fontSize: 14, color: theme.palette.primary.dark })}
+          sx={(theme) => ({ fontSize: 14, color: theme.palette.primary.dark, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",})}
         >
           {userName}/ <b>{fileName}</b>
         </Typography>

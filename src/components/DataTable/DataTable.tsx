@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Checkbox,
   CircularProgress,
   Table,
   TableBody,
@@ -48,17 +47,6 @@ export default function DataTable({
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow sx={{ backgroundColor: "red" }}>
-              <TableCell
-                padding="checkbox"
-                sx={{ backgroundColor: lighten(PRIMARY_COLOR, 0.7) }}
-              >
-                <Checkbox
-                  // indeterminate={numSelected > 0 && numSelected < rowCount}
-                  // checked={rowCount > 0 && numSelected === rowCount}
-                  // onChange={onSelectAllClick}
-                  style={{ color: PRIMARY_COLOR }}
-                />
-              </TableCell>
               {columns.map((column) => (
                 <TableCell
                   key={column}
@@ -88,14 +76,6 @@ export default function DataTable({
                     tabIndex={-1}
                     key={row.id}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        // indeterminate={numSelected > 0 && numSelected < rowCount}
-                        // checked={rowCount > 0 && numSelected === rowCount}
-                        // onChange={onSelectAllClick}
-                        style={{ color: PRIMARY_COLOR }}
-                      />
-                    </TableCell>
                     <TableCell>
                       <Box
                         sx={{ display: "flex", gap: 1, alignItems: "center" }}

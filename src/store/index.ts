@@ -6,15 +6,16 @@ import {
 import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
 import AuthSliceReducer from "./slices/Auth";
+import GistSliceReducer from "./slices/Gist";
 
 const reducers = combineReducers({
   auth: AuthSliceReducer,
+  gists: GistSliceReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

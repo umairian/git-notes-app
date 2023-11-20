@@ -1,6 +1,10 @@
 import { InputBase, alpha, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { PRIMARY_COLOR } from "../../constants/theme";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { saveGists, updateGists } from "../../store/slices/Gist";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -30,23 +34,45 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
       },
     },
-  }));
+  },
+}));
 
 export default function HeaderSearchBar() {
+  // Configuration Variables
+  const dispatch = useDispatch();
+
+  // Store
+  const { initialGists } = useSelector(
+    (state: RootState) => state.gists
+  );
+
+  // State Variables
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (search) {
+      dispatch(
+        updateGists({
+          gists: initialGists.filter((gist) => gist.id.includes(search)),
+        })
+      );
+    } else {
+      dispatch(saveGists({ gists: initialGists }));
+    }
+  }, [search]);
   return (
     <Search>
       <SearchIconWrapper>
@@ -55,6 +81,8 @@ export default function HeaderSearchBar() {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
       />
     </Search>
   );
