@@ -31,6 +31,15 @@ export type CreateGistQueryKey = {
     files: { [key: string]: { content: string } };
   };
 };
+export type UpdateGistQueryKey = {
+  accessToken: string;
+  gistId: string;
+  body: {
+    description?: string;
+    public?: boolean;
+    files: { [key: string]: { content: string } };
+  };
+};
 
 export interface CreateGistI {
   name: string;

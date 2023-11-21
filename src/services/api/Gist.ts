@@ -4,6 +4,7 @@ import {
   PublicGistsQueryKey,
   PublicSingleGistQueryKey,
   StarGistQueryKey,
+  UpdateGistQueryKey,
   UserGistsQueryKey,
 } from "../../types/Gist.t";
 import { axiosInstance } from "./config";
@@ -68,14 +69,11 @@ export function starGistApi({ accessToken, gistId }: StarGistQueryKey) {
 }
 
 export function unStarGistApi({ accessToken, gistId }: StarGistQueryKey) {
-  return axiosInstance.delete(
-    `/gists/${gistId}/star`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  return axiosInstance.delete(`/gists/${gistId}/star`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 }
 
 export function forkGistApi({ accessToken, gistId }: StarGistQueryKey) {
@@ -101,12 +99,21 @@ export function getGistForksApi({
 }
 
 export function deleteGistApi({ accessToken, gistId }: StarGistQueryKey) {
-  return axiosInstance.delete(
-    `/gists/${gistId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  return axiosInstance.delete(`/gists/${gistId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export function updateGistApi({
+  accessToken,
+  gistId,
+  body,
+}: UpdateGistQueryKey) {
+  return axiosInstance.patch(`/gists/${gistId}`, body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 }

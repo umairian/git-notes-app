@@ -1,13 +1,8 @@
 import {
   Box,
-  Card,
-  CardContent,
   CircularProgress,
-  Divider,
   Skeleton,
   Snackbar,
-  TextField,
-  Typography,
 } from "@mui/material";
 import AppLayout from "../../layouts/AppLayout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,14 +22,13 @@ import { useEffect, useState } from "react";
 import { PublicGistsResObjI } from "../../types/Gist.t";
 import GistCardUserInfo from "../../components/Home/GistCardUserInfo";
 import {
-  AiFillCode,
   AiFillDelete,
-  AiFillEdit,
   AiFillStar,
   AiOutlineFork,
   AiOutlineStar,
 } from "react-icons/ai";
 import ActionIconWrapper from "../../components/GistDetails/ActionIconWrapper";
+import GistFile from "../../components/GistDetails/GistFile";
 
 export default function GistDetailsPage() {
   // Configuration Variables
@@ -50,8 +44,6 @@ export default function GistDetailsPage() {
   const [starred, setStarred] = useState(false);
   const [snackbarOpened, setSnackbarOpened] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [edit, setEdit] = useState(false);
-  const [editValue, setEditValue] = useState("");
 
   const { isLoading, data, error } = useQuery({
     queryKey: ["singleGist", { gistId: gistId as string, accessToken }],
@@ -179,26 +171,17 @@ export default function GistDetailsPage() {
                 />
                 <Box display={"flex"} gap={2} alignItems={"center"}>
                   {userOwnGist && (
-                    <>
-                      <ActionIconWrapper
-                        text="Edit"
-                        icon={<AiFillEdit size={20} />}
-                        onClick={() => {
-                          setEdit(true);
-                        }}
-                      />
-                      <ActionIconWrapper
-                        text="Delete"
-                        icon={<AiFillDelete size={20} />}
-                        onClick={() => {
-                          confirm("Are you sure to delete the gist?");
-                          deleteGist({
-                            accessToken: accessToken as string,
-                            gistId: gistId as string,
-                          });
-                        }}
-                      />
-                    </>
+                    <ActionIconWrapper
+                      text="Delete"
+                      icon={<AiFillDelete size={20} />}
+                      onClick={() => {
+                        confirm("Are you sure to delete the gist?");
+                        deleteGist({
+                          accessToken: accessToken as string,
+                          gistId: gistId as string,
+                        });
+                      }}
+                    />
                   )}
                   <ActionIconWrapper
                     text={starred ? "Starred" : "Unstarred"}
@@ -239,53 +222,9 @@ export default function GistDetailsPage() {
               </Box>
             )}
             {gist &&
-              Object.keys(gist.files).map((fileName) => {
-                return (
-                <Card elevation={2} sx={{ width: "100%" }}>
-                  <CardContent>
-                    <Box display={"flex"} alignItems={"center"} gap={1} m={1}>
-                      <AiFillCode />
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {" "}
-                        {fileName}
-                      </Typography>
-                    </Box>
-                    <Divider />
-                    {edit ? (
-                      <TextField
-                        multiline
-                        rows={10}
-                        fullWidth
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        variant="outlined"
-                      />
-                    ) : (
-                      <pre
-                        style={{
-                          fontSize: 12,
-                          overflowX: "scroll",
-                        }}
-                      >
-                        {gist.files[fileName].content
-                          ?.split("\n")
-                          .map((line, index) => (
-                            <div key={index}>
-                              <span
-                                style={{ marginRight: "1em", color: "gray" }}
-                              >
-                                {index + 1}.
-                              </span>
-                              {line}
-                            </div>
-                          ))}
-                      </pre>
-                    )}
-
-                    <Divider sx={{ marginY: 2 }} />
-                  </CardContent>
-                </Card>
-              )})}
+              Object.keys(gist.files).map((fileName) => (
+                <GistFile gist={gist} fileName={fileName} owner={userOwnGist} />
+              ))}
           </>
         )}
       </Box>
